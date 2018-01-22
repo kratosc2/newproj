@@ -18,7 +18,7 @@ c = conn.cursor()
 app.addLabel('w','Welcome Program',8,0)
 app.setLabelBg('w','black')
 app.setLabelFg('w','white')
-app.setLabelFont('w',10)
+app.getLabelWidget("w").config(font=("Comic Sans", "8", "normal"))
 app.setLabelWidth('w','30')
 app.setLabelHeight('w','1')
 app.setLabelAnchor('w','sw')
@@ -48,10 +48,9 @@ app.setLabelBg('l6','green')
 app.setLabelBg('l5','green')
 
 random = ''.join([random.choice(string.ascii_letters + string.digits) for n in xrange(10)])
-app.addGrid('g1',[['Name','Price','Qty']],7,0)
+app.addGrid('g1',[['Name','Price','Qty']],7, 0, 2, 1)
 app.setGridSticky('g1','both')
 app.setGridBg('g1','mediumseagreen')
-
 
 def searchb(src):
     if src == 'Search':
@@ -105,7 +104,7 @@ def deleb(delb):
     if delb == 'Del':
         c.execute("DELETE FROM items WHERE name=(?)",(searchd,))
         app.warningBox('Delete',"".join(searchd) +' '+ 'Deleted !!!',parent=None)
-
+        conn.commit()
 
 
 
@@ -116,15 +115,24 @@ def update(upd):
         upde3 = app.getEntry('e3')
         upde4 = app.getEntry('e4')
         c.execute('UPDATE items SET name = (?), price = (?), qty = (?) WHERE name =(?)',(upde2, upde3, upde4, searchu))
-
+        conn.commit()
 
 
 
 app.addButton('Del',deleb,4,1)
 app.addButton('Update',update,5,1)
-app.addButton('upd',None,0,3)
 
+c.execute("SELECT * FROM items ")
 
+app.addGrid('g2',[['Name','Price','Qty']],0,4,2,0)
+app.addButton('bttn',None,1,4)
+app.addButton('bab',None,1,5)
+app.setSticky('news')
+rows =  c.fetchall()
+
+for row in rows:
+
+    app.addGridRow('g2',[row[0], row[1], row[2]])
 
 app.go()
 
